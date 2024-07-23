@@ -1,0 +1,48 @@
+{% set name = "botan" %}
+{% set version = "3.5.0" %}
+
+package:
+  name: {{ name|lower }}
+  version: {{ version }}
+
+source:
+  url: https://botan.randombit.net/releases/Botan-{{ version }}.tar.xz
+  sha256: 67e8dae1ca2468d90de4e601c87d5f31ff492b38e8ab8bcbd02ddf7104ed8a9f
+
+build:
+  script:
+    - ./configure.py --prefix=$CONDA_PREFIX --cc=gcc --without-os-feature=getentropy --without-documentation
+    - make
+    - make tests
+    - make install
+  number: 0
+  skip: True  # [not linux]
+
+requirements:
+  build:
+    - {{ compiler('cxx') }}
+    - python
+  host:
+    - libzlib
+
+test:
+  commands:
+    - botan-test
+
+about:
+  home: https://botan.randombit.net/
+  summary: Botan (Japanese for peony flower) is a C++ cryptography library released under the permissive Simplified BSD license.
+  description: |
+    Botan’s goal is to be the best option for cryptography in C++ by offering the tools necessary to implement
+    a range of practical systems, such as TLS protocol, X.509 certificates, modern AEAD ciphers, PKCS#11 and TPM hardware support,
+    password hashing, and post quantum crypto schemes. A Python binding is included, and several other language bindings are available.
+    The library is accompanied by a featureful command line interface.
+  license: BSD-2-Clause
+  license_family: BSD
+  license_file: license.txt
+  doc_url: https://botan.randombit.net/handbook
+  dev_url: https://github.com/randombit/botan
+
+extra:
+  recipe-maintainers:
+    - sdebionne
